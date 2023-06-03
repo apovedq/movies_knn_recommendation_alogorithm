@@ -1,0 +1,159 @@
+.screen{
+    font-family: 'Nunito', sans-serif;
+    flex-direction: column;
+    align-items: center;
+}
+
+body{
+    background-image: url(./assets/background.png);
+    background-size: cover;
+}
+
+.screen-act{
+    display: flex;
+}
+
+.screen-off{
+    display: none;
+}
+
+#server-conection-status{
+    font-size: 10px;
+    border-radius: 20px;
+    width: 200px;
+    background-color: red;
+    border-style: solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    font-family: 'Nunito', sans-serif;
+}
+
+#server-conection-status h3{
+    margin-right: 20px;
+}
+
+#title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 800px;
+}
+
+#dropdown{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+#dropdown select{
+    width: 100%;
+    margin: 10px 0;
+    text-align: center;
+    padding:10px 10px;border-radius: 10px;
+    font-weight: bold;
+    font-family: 'Nunito', sans-serif;
+}
+
+#dropdown label {
+margin-left: 40px;
+}
+
+#dropdown input{
+    width: 100px;
+    margin: 10px 50px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.continue-btn{
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    background-color: rgb(77, 237, 101);
+    width: 300px;
+    height: 40px;
+    margin: 10px 50px;
+    border-radius: 10px;
+}
+
+#agregation_selection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+}
+
+#agregation_selection p {
+    text-align: center;
+    margin-top: -10px;
+    width: 90%;
+}
+
+#agregation_selection select{
+      width: 100%;
+    margin: 10px 0;
+    text-align: center;
+    padding:10px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-family: 'Nunito', sans-serif;
+}
+
+.image-slider{
+    width: 80px;
+    object-fit: contain;
+}
+
+.character-value{
+    margin: 30px ;
+    display: flex;
+    flex-direction: row;
+    border-style: solid;
+    border-width: 1px;
+    padding: 20px 20px;
+    border-radius: 10px;
+}
+
+.character-value div{
+    display: flex;
+    flex-direction: column;
+    margin-left:50px;
+}
+
+.character-value p{
+    font-weight: bold;
+    font-size:18px;
+}
+
+.character-value section{
+    display: flex;
+    flex-direction: row;
+}
+
+.character-value input:hover{
+    cursor: w-resize;
+}
+
+.character-value section p{
+    color: red;
+}
+
+#slider-ch{
+    margin: 0 20px;
+}
+
+#results-screen h1{
+ color: red;
+}
+
+#results-screen ol{
+    border-radius: 40Px;
+    border-style: solid;
+    padding: 30px 30px 30px 50px;
+}
+
+#results-screen li{
+    margin: 20px 0px;
+}

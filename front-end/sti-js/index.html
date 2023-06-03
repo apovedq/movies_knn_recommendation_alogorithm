@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+</head>
+
+<body>
+
+    <!--Check server connection-->
+    <div id="server-conection-status">
+        <h3> Server Status: </h3>
+        <div id="myInfo"> No hay conexion </div>
+    </div>
+
+    <!--Main screen-->
+    <section id="main-screen" data-aos="zoom-out" data-aos-duration="1000" data-aos-once="false" class="screen screen-act">
+
+        <div id="title">
+            <h1> Hola, ¡nos gustaria recomendarte un parche!</h1>
+            <p> Te queremos recomendar, con cuales de las personas de este curso
+                podrías ver una pelicula basado en sus preferencias de actores. </p>
+        </div>
+
+        <div id="dropdown">
+            <h2> Dinos ¿Quién eres? </h2>
+
+            <!--Filled names with javascript-->
+            <select id="names_dropdown"></select>
+
+            <div id="k-neighbor">
+                <label for=""> ¿Con cuanta gente lo quieres ver?</label>
+                <input id="knn-value" type="number" value="5">
+            </div>
+        </div>
+
+        <div id="agregation_selection">
+            <h4> ¿Cómo te gustaria seleccionar la pelicula?</h4>
+            <select id="agregation_dropdown" onchange="handleGetAgregattionMethod()">
+                <option value="" disabled> Selecciona el metodo de agregación </option>
+                <option value=0> Naive Average </option>
+                <option value=1>Least Misery </option>
+                <option value=2> Maximum Pleasure </option>
+                <option value=3> Media Satisfaction </option>
+            </select>
+            <h4> Así funciona este metodo: </h4>
+            <p id="explained-method"> Aquí te explicaremos como funciona cada metodo que selecciones </p>
+        </div>
+
+        <button class="continue-btn" onclick="handleSetWeightsScreen()"> Comenzemos </button>
+    </section>
+
+    <!--Weights screen-->
+    <section id="weights-screen" data-aos="zoom-out" data-aos-duration="1000" data-aos-once="false" class="screen screen-off">
+        <h4> ¿Del 1 al 10 que tanto te gustaria ver este actor o director en tu pelicula esta vez?</h4>
+        <!--Filled with javascript-->
+        <div id="weights-sliders">
+
+        </div>
+
+        <button class="continue-btn" onclick="handleSetInfoInDB()"> Siguiente </button>
+    </section>
+
+    <!--Results screen-->
+    <section id="results-screen" data-aos="zoom-out" data-aos-duration="1000" data-aos-once="false" class="screen screen-off">
+       
+        <h3 id="myUser"> Esta es nuestra recomendacion para ti</h3>
+
+        <h4> Deberias ver: </h4>
+        <h1 id="recommended-movie"> </h1>
+         <h4> Acompañado/a de: </h4>
+        <ol id="recommended-users">
+            
+        </ol>
+    </section>
+    <!--Check connection-->
+
+
+
+
+    <script src="./index.js" async defer></script>
+    <script src="./components/dropdown.js" async defer></script>
+    <script src="./components/handleScreens.js" async defer></script>
+    <script src="./components/checkServerConnection.js" async defer></script>
+    <script src="./components/results.js" async defer></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+            AOS.init({
+                duration: 3000,
+                once: true,
+            });
+        </script>
+</body>
+
+</html>
