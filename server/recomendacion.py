@@ -10,8 +10,6 @@
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import sklearn as sk
 from sklearn.cluster import DBSCAN
 
@@ -103,8 +101,6 @@ pesos = {}
 for i in df.drop(columns='User').columns:
         pesos[i] = 1
         
-print(pesos)
-
 
 # In[21]:
 
@@ -133,7 +129,6 @@ for i in peliculas.drop(columns='Movie').columns:
 # In[23]:
 
 
-print(type(df['Tim Burton'][0]))
 
 
 # In[24]:
@@ -206,7 +201,6 @@ corrs = {}
 for i in range(dfCopy.shape[0]):
     corrs[dfCopy.iloc[i].User] = cos_sim(dfCopy.loc[dfCopy['User']==user_select].drop(columns='User') , 
                                                                           dfCopy.loc[dfCopy['User']==dfCopy.iloc[i].User].drop(columns='User'))[0][0] 
-print(corrs)
 
 
 # In[30]:
@@ -265,7 +259,6 @@ def top_val(N, D):
     final = {}
     
     # animal satanico para obtener llave con un valor, en este caso, el valor maximo
-    # print(list(temp.keys())[list(temp.values()).index(max(temp.values()))])
     
     # iterador que agrega los N valores mas grandes del diccionario al diccionario final
     
@@ -284,7 +277,6 @@ vecinos = top_val(num_vec, corrs)
 # borra el usuario seleccionado
 vecinos.pop(user_select)
 
-print(vecinos)
 
 
 # In[35]:
@@ -317,7 +309,6 @@ for i in vecinos.keys():
     protopersona = protopersona.add(dfI, fill_value=0)
 
 protopersona = protopersona.drop(0)
-print(protopersona)
 
 
 # In[38]:
@@ -387,7 +378,6 @@ protoCopy = protoCopy.to_frame()
 # lo rotamos para que este en el formato correcto
 protoCopy = protoCopy.transpose()
 
-print(protoCopy)
 
 
 # In[41]:
@@ -441,7 +431,6 @@ rec_corrs = {}
 
 for i in range(peliculasCopy.shape[0]):
     rec_corrs[peliculasCopy.iloc[i].Movie] = cos_sim(protoCopy , peliculasCopy.loc[peliculasCopy['Movie']==peliculasCopy.iloc[i].Movie].drop(columns='Movie'))[0][0] 
-print(rec_corrs)
 
 
 # In[46]:
@@ -462,7 +451,6 @@ num_rec = num_rec -1
 
 recomendaciones = top_val(num_rec, rec_corrs)
 
-print(recomendaciones)
 
 
 # In[48]:
@@ -494,11 +482,8 @@ for i in recomendaciones.keys():
     dfs.append(peliculasCopy.loc[peliculasCopy['Movie']==i].rename(columns={'Movie':'Name'}))
 
 dfs.append(protoCopy)
-print(dfs[len(dfs)-1])
 dfs[len(dfs)-1].insert(0, 'Name', 'Protopersona')
-print(dfs[len(dfs)-1])
 final_rec = pd.concat(dfs)
-#print(final_rec)
 
 
 # In[51]:

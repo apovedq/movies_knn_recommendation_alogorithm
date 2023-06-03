@@ -1,4 +1,5 @@
-
+// Different localhosts
+const LOCALHOST = "http://127.0.0.1:5001";
 
 // Post method function
 async function postData(url = "", data = {}) {
@@ -27,7 +28,7 @@ function handleSetUserName() {
 
   const myUser = document.getElementById("myUser")
 
-const userFromDB = bringUser("http://127.0.0.1:5001/getCurrentUser")
+const userFromDB = bringUser( LOCALHOST + "/getCurrentUser")
 userFromDB.then((response) => {myUser.innerText = `Esta es nuestra recomendacion para ti `  + response.msg})
 }
 
@@ -40,7 +41,7 @@ function handleSaveNameinDB() {
 
   //Funcion para verificar que se escoja el nombre y que se mande a la base de datos
   if (selectedName !== "") {
-    postData("http://127.0.0.1:5001/post_name", { answer: selectedName }).then((raw) => 
+    postData(LOCALHOST + "/post_name", { answer: selectedName }).then((raw) => 
         raw.response.answer
     ).then((response) => { console.log("Nombre guardado en la base de datos: " + response) });
 
@@ -71,7 +72,7 @@ function handleGetAgregattionMethod() {
     explainedMethod.innerText = "En este caso, calcularías el promedio de las preferencias, pero dándole más peso a las opiniones de tus amigos más satisfechos. Tomarías en cuenta las preferencias de todos, pero considerarías más las opiniones de aquellos amigos que estén más emocionados o satisfechos con la elección.";
   }
 
-   postData("http://127.0.0.1:5001/post_method", { answer: selectedMethod }).then((raw) => 
+   postData(LOCALHOST + "/post_method", { answer: selectedMethod }).then((raw) => 
         raw.response.answer
     ).then((response) => { console.log("Metodo guardado en la base de datos: " + response) });
 }
@@ -87,7 +88,7 @@ function handleGetSlidersValue() {
     sliderValues.push(currentValue)
   })
 
-  postData("http://127.0.0.1:5001/post_slider_values", { answer: sliderValues }).then((raw) => 
+  postData(LOCALHOST + "/post_slider_values", { answer: sliderValues }).then((raw) => 
         raw.response.answer
     ).then((response) => { console.log("Valores de slider guardados en la base de datos: " + response) });
 }
@@ -97,7 +98,7 @@ let knnValue = ""
 function handleGetKnnValue() {
   knnValue = document.getElementById("knn-value").value
   
-  postData("http://127.0.0.1:5001/post_knn_value", { answer: knnValue }).then((raw) => 
+  postData(LOCALHOST + "/post_knn_value", { answer: knnValue }).then((raw) => 
         raw.response.answer
     ).then((response) => { console.log("El valor de vecinos se ha guardado en la base de datos: " + response) });
 }
