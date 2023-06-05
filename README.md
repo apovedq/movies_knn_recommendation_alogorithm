@@ -7,6 +7,13 @@ Develop a recommendation system using a python backend and javascript frontend w
     - Numpy
     - Pandas
     - Sklearn
+    - Flask
+    - CORS
 
 #### Javascript
-    - ...
+    Nothing really, just start a server at front-end/sti-js/
+
+### Building
+Follow the instructions at server/README.md, or execute server/run.sh (`bash server/run.sh`)
+
+As for the JS server, live-server will do, but you can also use `python3 -m http.server 8000 --bind 127.0.0.1`
