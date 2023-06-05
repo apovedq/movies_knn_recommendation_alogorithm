@@ -7,6 +7,7 @@ async function postData(url = "", data = {}) {
   const response = await fetch(url, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     headers: {
+      "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },

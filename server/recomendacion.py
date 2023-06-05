@@ -18,7 +18,7 @@ class Rec:
 
 
         # Usuario selecionado a comparar con dataframe original
-        self.user_select = 'Sebastian Mosquera'
+        self.user_select = 'Andres Poveda'
 
         # Usuario agregado, resultado del anterior, a comparar con dataframe de sugerencias
         self.protopersona = 0
@@ -57,26 +57,26 @@ class Rec:
 
     # modifica usuario seleccionado
 
-    def set_user_select(x):
+    def set_user_select(self, x):
         self.user_select = x
         return 1
 
 
     # coloca arreglo de pesos en orden de columna izq a der
-    def set_pesos(x):
+    def set_pesos(self, x):
         self.pesos = x
         return 1
 
 
     # asigna num usuarios y metodo de agregacion
-    def set_num_vec(x):
+    def set_num_vec(self, x):
         if(x>0 and x<self.dfCopy.shape[0]):
             self.num_vec = x
             return 1
         else:
             return 0
 
-    def set_agr_met(x):
+    def set_agr_met(self, x):
         if(x>0 and x<4):
             self.agr_met = x
             return 1
@@ -85,7 +85,7 @@ class Rec:
 
 
     # asigna num recomendaciones
-    def set_num_rec(x):
+    def set_num_rec(self, x):
         if(x>0 and x<self.peliculasCopy.shape[0]):
             self.num_rec = x
             return 1
@@ -316,3 +316,6 @@ class Rec:
 
     def get_user_select(self):
         return self.user_select
+
+    def get_user_list(self):
+        return self.dfCopy["User"].to_list();

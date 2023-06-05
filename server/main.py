@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.setUpUser import selected_user
+import json
 
 # obtenemos la clase del backend de recomendacion
 from recomendacion import Rec
 
-rec = Rec();
+rec = Rec()
 
-rec.exec();
+rec.exec()
 
-print(rec.get_final_dataframe());
+# recomendacion sin ningun cambio de front
+print(rec.get_final_dataframe())
 
 
 # Declare the APP server instance
@@ -17,30 +19,23 @@ app = Flask(__name__)
 # Enable CORS policies
 CORS(app)
 
-# Variables to store values from front end.
-currentUser = ""
-currentMethod = ""
-currenSliderValues = ""
-currentKnnValue = ""
-
-currentUserList = ["Andres Poveda", "Camilo Munera", "Juan Pablo Bueno"]
-currentRecommendedMovie =  "Los piratas del caribe"
 
 # GET Current user: string =============================================================================
 @app.route("/getCurrentUser", methods=["GET"])
 def setUser():
-  return jsonify({"msg": currentUser})
+    return jsonify({"Access-Control-Allow-Origin": "*", "msg": rec.get_user_select()})
 
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
-  return jsonify({"msg": currentUserList})
+  return jsonify({"msg": list(rec.get_vecinos().keys())})
 
 
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_movie", methods=["GET"])
 def setMovie():
-  return jsonify({"msg": currentRecommendedMovie})
+  rec.exec();
+  return jsonify({"msg": rec.get_final_dataframe()["Name"].to_list()[0]})
 
   # GET Connection status =============================================================================
 @app.route("/", methods=["GET"])
@@ -65,9 +60,12 @@ def define_user():
     global myUser
     myUser = data
     if not data:
-        return (jsonify({'error': 'No data provided'}), 400)
-    return (jsonify({'response': data}), 201)
-
+        resp = (jsonify({'error': 'No data provided'}), 400)
+        return resp
+    print("USUARIO ACTUAL \n", myUser['answer'])
+    resp = (jsonify({"Access-Control-Allow-Origin": "*",'response': data}), 201, {'Access-Control-Allow-Origin': '*'})
+    print(resp)
+    return resp
 
 # POST setMethod: number =============================================================================
 @app.route('/post_method', methods=['POST'])
@@ -78,6 +76,7 @@ def define_method():
     myMethod = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
+    print("METODO ACTUAL \n",myMethod)
     return (jsonify({'response': data}), 201)
 
 # POST sliderValues: number =============================================================================
@@ -89,6 +88,7 @@ def define_slider_values():
     currenSliderValues = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
+    print("PESOS ACTUALES \n",currenSliderValues)
     return (jsonify({'response': data}), 201)
 
 # POST sliderValues: number =============================================================================
@@ -100,6 +100,7 @@ def define_knn_value():
     currentKnnValue = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
+    print("KNN ACTUAL \n", currentKnnValue)
     return (jsonify({'response': data}), 201)
 
 # Execute the app instance
