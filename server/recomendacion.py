@@ -108,7 +108,7 @@ class Rec:
         return final
 
     ##### BLOQUE DE CORRELACION / USUARIOS RECOMENDADOS / VECINDARIOS #####
-    def correlacion(self):
+    def exec(self):
 
         for i in self.df.drop(columns='User').columns:
                 self.pesos[i] = 1
@@ -168,7 +168,6 @@ class Rec:
 
 
     ##### BLOQUE DE AGREGACION / PROTOPERSONA / RECOMENDACION FINAL #####
-    def agregacion(self):
         # AGREGACION
         # dataframe vacio
         self.protopersona = pd.DataFrame(data=None, columns=self.dfCopy.drop(columns='User').columns)

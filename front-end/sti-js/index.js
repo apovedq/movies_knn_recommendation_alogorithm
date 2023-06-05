@@ -108,12 +108,12 @@ function handleGetKnnValue() {
 
 //Send all the info to the db and shows the result screen
 function handleSetInfoInDB() {
+  handleSetUserName()
   handleSaveNameinDB()
   handleGetAgregattionMethod()
   handleGetSlidersValue()
   handleGetKnnValue()
   handleShowResultsScreen() 
-  handleSetUserName()
   handleSetResults()
 }
 

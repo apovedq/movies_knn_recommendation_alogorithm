@@ -8,9 +8,7 @@ from recomendacion import Rec
 
 rec = Rec()
 
-rec.correlacion()
-
-rec.agregacion()
+rec.exec()
 
 # recomendacion sin ningun cambio de front
 print(rec.get_final_dataframe())
@@ -29,8 +27,7 @@ def setUser():
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
-  rec.correlacion()
-
+  rec.exec()
   print("VECINOS: \n", rec.get_vecinos());
   return jsonify({"msg": list(rec.get_vecinos().keys())})
 
@@ -38,7 +35,6 @@ def setUserList():
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_movie", methods=["GET"])
 def setMovie():
-  rec.agregacion()
   print("RECOMENDACIONES: \n", rec.get_final_dataframe())
   return jsonify({"msg": rec.get_final_dataframe()["Name"].to_list()[0]})
 
