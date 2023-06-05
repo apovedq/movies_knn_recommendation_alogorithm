@@ -24,6 +24,13 @@ CORS(app)
 def setUser():
     return jsonify({"Access-Control-Allow-Origin": "*", "msg": rec.get_user_select()})
 
+# GET max knn: int =============================================================================
+
+@app.route("/get_max_knn", methods=["GET"])
+def setMaxKnn():
+    maxKnn = rec.get_main_df().shape[0]
+    return jsonify({"Access-Control-Allow-Origin": "*", "msg": maxKnn})
+
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
