@@ -1,317 +1,312 @@
 #!/usr/bin/env python
-#imports
+class Rec:
+    #imports
+    import numpy as np
+    import pandas as pd
+    import sklearn as sk
+    from sklearn.cluster import DBSCAN
+    import sklearn.metrics.pairwise 
 
-import numpy as np
-import pandas as pd
-import sklearn as sk
-from sklearn.cluster import DBSCAN
-import sklearn.metrics.pairwise 
+    #Inicializa todas las variables base
+    def __init__(self):
 
+        # Dataframe con usuarios (a comparar)
+        self.df = pd.read_csv('/data/actores.csv')
 
-# Dataframe con usuarios (a comparar)
-df = pd.read_csv('../data/actores.csv')
-
-# Dataframe con peliculas (recomendaciones)
-peliculas = pd.read_csv('../data/peliculas.csv')
-
-# retorna dataframes sin modificar
-def get_main_df():
-    return df
-
-def get_recommend_df():
-    return peliculas
+        # Dataframe con peliculas (recomendaciones)
+        self.peliculas = pd.read_csv('/data/peliculas.csv')
 
 
-# Usuario selecionado a comparar con dataframe original
-user_select = 'Sebastian Mosquera'
+        # Usuario selecionado a comparar con dataframe original
+        self.user_select = 'Sebastian Mosquera'
 
-# Usuario agregado, resultado del anterior, a comparar con dataframe de sugerencias
-protopersona = 0
-
-# Retorna o modifica usuario seleccionado
-def get_user_select():
-    return user_select
-
-def set_user_select(x):
-    user_select = x
-    return 1
+        # Usuario agregado, resultado del anterior, a comparar con dataframe de sugerencias
+        self.protopersona = 0
 
 
-# como crear un dict
-#pesos = {
-#    'Pop': 0.1,
-#    'Indie': 0.1
-#}
-# como agregar vals
-#pesos['Pop'] = 0.1
+        # como crear un dict
+        #pesos = {
+        #    'Pop': 0.1,
+        #    'Indie': 0.1
+        #}
+        # como agregar vals
+        #pesos['Pop'] = 0.1
+
+        # crear diccionario con los pesos de todas las columnas (excepto User)
+        self.pesos = {}
 
 
-# crear diccionario con los pesos de todas las columnas (excepto User)
-pesos = {}
-
-for i in df.drop(columns='User').columns:
-        pesos[i] = 1
+        # Iterador del tamaño de la dimension vertical correlacionando cada fila con usuario seleccionado y agregandolo al diccionario
+        self.corrs = {}
 
 
-# Retornar o cambiar dict de pesos
-def get_pesos():
-    return pesos
+        # Numero de usuarios a considerar como vecinos cercanos
+        self.num_vec = 5
 
-def set_pesos(x):
-    pesos = x
-    return 1
-
-
-# Asegurar valores como float
-for i in df.drop(columns='User').columns:
-    df[i] = pd.to_numeric(df[i], downcast='float')
-
-for i in peliculas.drop(columns='Movie').columns:
-    peliculas[i] = pd.to_numeric(peliculas[i], downcast='float')
+        # Metodo de agrupacion elegido: 
+        # 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction
+        self.agr_met = 0
 
 
-# copia dataframes
-dfCopy = df.copy()
-peliculasCopy = peliculas.copy()
+        # Numero de recomendaciones
+        self.num_rec = 4
 
+        self.rec_corrs = {}
 
-## normalizar valores
-dfCopy = dfCopy.drop(columns="User")
-dfCopy = (dfCopy-dfCopy.min())/(dfCopy.max()-dfCopy.min())
-dfCopy.insert(0, "User", df['User'])
+    ###### SETTERS #####
 
-peliculasCopy = peliculasCopy.drop(columns="Movie")
-peliculasCopy = (peliculasCopy-peliculasCopy.min())/(peliculasCopy.max()-peliculasCopy.min())
-peliculasCopy.insert(0, "Movie", peliculas['Movie'])
+    # modifica usuario seleccionado
 
-
-# CORRELACION ENTRE USUARIOS
-
-# multiplica las columnas con su llave respectiva en el diccionario de pesos (Pop con peso de Pop...)
-for i in dfCopy.drop(columns="User").columns:
-    dfCopy[i] = dfCopy[i]*pesos[i]
-
-
-# retorna dataframe normalizado
-def get_norm_df():
-    return dfCopy
-
-
-# Como encontrar fila con valor de columna (cuando el User sea igual al usuario)
-# dfCopy.loc[dfCopy['User']==user_select]
-
-# Lo mismo pero con valor solo conocido por el indice
-# dfCopy.loc[dfCopy['User']== dfCopy.iloc[1].User]
-
-# Funcion de similitud coseno
-cos_sim = sklearn.metrics.pairwise.cosine_similarity
-
-# Iterador del tamaño de la dimension vertical correlacionando cada fila con usuario seleccionado y agregandolo al diccionario
-corrs = {}
-
-for i in range(dfCopy.shape[0]):
-    corrs[dfCopy.iloc[i].User] = cos_sim(dfCopy.loc[dfCopy['User']==user_select].drop(columns='User') , dfCopy.loc[dfCopy['User']==dfCopy.iloc[i].User].drop(columns='User'))[0][0] 
-
-
-# retorna diccionario de correlaciones con usuario seleccionado
-def get_corrs():
-    return corrs
-
-
-# Vecindarios
-
-# Numero de usuarios a considerar como vecinos cercanos
-num_vec = 5
-
-# Metodo de agrupacion elegido: 
-# 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction
-agr_met = 0
-
-
-# retorna y asigna num usuarios y metodo
-def get_num_vec():
-    return num_vec
-
-def get_agr_met():
-    return agr_met
-
-def set_num_vec(x):
-    if(x>0 and x<dfCopy.shape[0]):
-        num_vec = x
+    def set_user_select(x):
+        self.user_select = x
         return 1
-    else:
-        return 0
 
-def set_agr_met(x):
-    if(x>0 and x<4):
-        agr_met = x
+
+    # coloca arreglo de pesos en orden de columna izq a der
+    def set_pesos(x):
+        self.pesos = x
         return 1
-    else:
-        return 0
 
 
-# Obtener top N valores de un diccionario D
-def top_val(N, D):
-    temp = D.copy()
-    final = {}
-    
-    # iterador que agrega los N valores mas grandes del diccionario al diccionario final
-    for i in range(N+1):
-        new = list(temp.keys())[list(temp.values()).index(max(temp.values()))]
-        final[new] = temp[new]
-        temp.pop(new)
-    return final
+    # asigna num usuarios y metodo de agregacion
+    def set_num_vec(x):
+        if(x>0 and x<self.dfCopy.shape[0]):
+            self.num_vec = x
+            return 1
+        else:
+            return 0
 
-vecinos = top_val(num_vec, corrs)
-
-# borra el usuario seleccionado
-vecinos.pop(user_select)
+    def set_agr_met(x):
+        if(x>0 and x<4):
+            self.agr_met = x
+            return 1
+        else:
+            return 0
 
 
-# Retorna vecinos
-def get_vecinos():
-    return vecinos
+    # asigna num recomendaciones
+    def set_num_rec(x):
+        if(x>0 and x<self.peliculasCopy.shape[0]):
+            self.num_rec = x
+            return 1
+        else:
+            return 0
 
 
-# AGREGACION
-# dataframe vacio
-protopersona = pd.DataFrame(data=None, columns=dfCopy.drop(columns='User').columns)
+    ##### BLOQUE DE CODIGO #####
+    def exec():
+        for i in self.df.drop(columns='User').columns:
+                self.pesos[i] = 1
 
-# primer fila en 0
-protopersona.loc[len(protopersona)] = 0
+        # Asegurar valores como float
+        for i in self.df.drop(columns='User').columns:
+            self.df[i] = pd.to_numeric(self.df[i], downcast='float')
 
-
-# obtiene los dataframes de las personas en el diccionario vecinos y los une en la protopersona
-for i in vecinos.keys():
-    dfI = dfCopy.loc[dfCopy['User']==i].drop(columns='User')
-    protopersona = protopersona.add(dfI, fill_value=0)
-
-protopersona = protopersona.drop(0)
+        for i in self.peliculas.drop(columns='Movie').columns:
+            self.peliculas[i] = pd.to_numeric(self.peliculas[i], downcast='float')
 
 
-# retornar dataframe de vecindario
-def get_vecindario_df():
-    return protopersona
+        # copia dataframes
+        self.dfCopy = self.df.copy()
+        self.peliculasCopy = self.peliculas.copy()
 
 
-# guardemos protopersona sin tocar
-protoCopy = protopersona.copy()
+        ## normalizar valores
+        self.dfCopy = self.dfCopy.drop(columns="User")
+        self.dfCopy = (self.dfCopy-self.dfCopy.min())/(self.dfCopy.max()-self.dfCopy.min())
+        self.dfCopy.insert(0, "User", self.df['User'])
+
+        self.peliculasCopy = self.peliculasCopy.drop(columns="Movie")
+        self.peliculasCopy = (self.peliculasCopy-self.peliculasCopy.min())/(self.peliculasCopy.max()-self.peliculasCopy.min())
+        self.peliculasCopy.insert(0, "Movie", self.peliculas['Movie'])
 
 
-# Aplica metodo
-# 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction
-agr_met = 0
+        # CORRELACION ENTRE USUARIOS
 
-if (agr_met == 0):
-    # se deja el promedio
-    protoCopy = protoCopy.mean()
-    
-elif (agr_met == 1):
-    # se borran columnas menores de 0.5
-    protoCopy = protoCopy.mean()
-    for i in protoCopy.keys():
-        if(protoCopy[i] < 0.5):
-            protoCopy[i] = 0
+        # multiplica las columnas con su llave respectiva en el diccionario de pesos (Pop con peso de Pop...)
+        for i in self.dfCopy.drop(columns="User").columns:
+            self.dfCopy[i] = self.dfCopy[i]*self.pesos[i]
+
+
+
+        # Como encontrar fila con valor de columna (cuando el User sea igual al usuario)
+        # self.dfCopy.loc[self.dfCopy['User']==self.user_select]
+
+        # Lo mismo pero con valor solo conocido por el indice
+        # self.dfCopy.loc[self.dfCopy['User']== self.dfCopy.iloc[1].User]
+
+        # Funcion de similitud coseno
+        cos_sim = sklearn.metrics.pairwise.cosine_similarity
+
+
+        for i in range(self.dfCopy.shape[0]):
+            self.corrs[self.dfCopy.iloc[i].User] = cos_sim(self.dfCopy.loc[self.dfCopy['User']==self.user_select].drop(columns='User') , self.dfCopy.loc[self.dfCopy['User']==self.dfCopy.iloc[i].User].drop(columns='User'))[0][0] 
+
+
+
+        # Vecindarios
+        # Obtener top N valores de un diccionario D
+        def top_val(N, D):
+            temp = D.copy()
+            final = {}
             
-elif (agr_met == 2):
-    # se borran columnas menores de 0.8
-    protoCopy = protoCopy.mean()
-    for i in protoCopy.keys():
-        if(protoCopy[i] < 0.8):
-            protoCopy[i] = 0
-    
-elif (agr_met == 3):
-    # se dejan las desviaciones estandar bajas
-    
-    # arreglo de columnas a "borrar"
-    remove = []
-    
-    for col in protoCopy.columns:
-        # si la columna no tiene la minima desviacion, agregar a arreglo
-        if(protoCopy[col].std().min() != protoCopy.std().min()):
-            remove.append(col)
+            # iterador que agrega los N valores mas grandes del diccionario al diccionario final
+            for i in range(N+1):
+                new = list(temp.keys())[list(temp.values()).index(max(temp.values()))]
+                final[new] = temp[new]
+                temp.pop(new)
+            return final
+
+        vecinos = top_val(self.num_vec, self.corrs)
+
+        # borra el usuario seleccionado
+        vecinos.pop(self.user_select)
+
+
+        # AGREGACION
+        # dataframe vacio
+        self.protopersona = pd.DataFrame(data=None, columns=self.dfCopy.drop(columns='User').columns)
+
+        # primer fila en 0
+        self.protopersona.loc[len(self.protopersona)] = 0
+
+
+        # obtiene los dataframes de las personas en el diccionario vecinos y los une en la protopersona
+        for i in vecinos.keys():
+            self.dfI = self.dfCopy.loc[self.dfCopy['User']==i].drop(columns='User')
+            self.protopersona = self.protopersona.add(self.dfI, fill_value=0)
+
+        self.protopersona = self.protopersona.drop(0)
+
+
+        # guardemos protopersona sin tocar
+        self.protoCopy = self.protopersona.copy()
+
+
+        # Aplica metodo
+        # 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction
+        self.agr_met = 0
+
+        if (self.agr_met == 0):
+            # se deja el promedio
+            self.protoCopy = self.protoCopy.mean()
             
-    # borrar las columnas en arreglo
-    protoCopy[remove[:]] = 0
-    
-    # ahora si promediamos
-    protoCopy = protoCopy.mean()
+        elif (self.agr_met == 1):
+            # se borran columnas menores de 0.5
+            self.protoCopy = self.protoCopy.mean()
+            for i in self.protoCopy.keys():
+                if(self.protoCopy[i] < 0.5):
+                    self.protoCopy[i] = 0
+                    
+        elif (self.agr_met == 2):
+            # se borran columnas menores de 0.8
+            self.protoCopy = self.protoCopy.mean()
+            for i in self.protoCopy.keys():
+                if(self.protoCopy[i] < 0.8):
+                    self.protoCopy[i] = 0
+            
+        elif (self.agr_met == 3):
+            # se dejan las desviaciones estandar bajas
+            
+            # arreglo de columnas a "borrar"
+            remove = []
+            
+            for col in self.protoCopy.columns:
+                # si la columna no tiene la minima desviacion, agregar a arreglo
+                if(self.protoCopy[col].std().min() != self.protoCopy.std().min()):
+                    remove.append(col)
+                    
+            # borrar las columnas en arreglo
+            self.protoCopy[remove[:]] = 0
+            
+            # ahora si promediamos
+            self.protoCopy = self.protoCopy.mean()
 
-else:
-    print('wrong number: 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction')
-    
+        else:
+            print('wrong number: 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction')
+            
 
-# convertimos usuario a dataframe
-protoCopy = protoCopy.to_frame()
+        # convertimos usuario a dataframe
+        self.protoCopy = self.protoCopy.to_frame()
 
-# lo rotamos para que este en el formato correcto
-protoCopy = protoCopy.transpose()
-
-
-# retornar protopersona final
-def get_protopersona():
-    return protoCopy
-
-
-# RECOMENDACION
-# Correlacion
-
-# Numero de recomendaciones
-num_rec = 4
-
-
-# retorna y asigna num recomendaciones
-def get_num_rec():
-    return num_rec
-
-def set_num_rec(x):
-    if(x>0 and x<peliculasCopy.shape[0]):
-        num_vec = x
-        return 1
-    else:
-        return 0
-
-
-rec_corrs = {}
+        # lo rotamos para que este en el formato correcto
+        self.protoCopy = self.protoCopy.transpose()
 
 
-for i in range(peliculasCopy.shape[0]):
-    rec_corrs[peliculasCopy.iloc[i].Movie] = cos_sim(protoCopy , peliculasCopy.loc[peliculasCopy['Movie']==peliculasCopy.iloc[i].Movie].drop(columns='Movie'))[0][0] 
+        # RECOMENDACION
+        # Correlacion
+        for i in range(self.peliculasCopy.shape[0]):
+            self.rec_corrs[self.peliculasCopy.iloc[i].Movie] = cos_sim(self.protoCopy , self.peliculasCopy.loc[self.peliculasCopy['Movie']==self.peliculasCopy.iloc[i].Movie].drop(columns='Movie'))[0][0] 
 
 
-# retorna nivel de correlacion con dataframe de correlacion
-def get_corr_protopersona():
-    return rec_corrs
+        # Vecindarios
+        self.num_rec = self.num_rec -1
+
+        recomendaciones = top_val(self.num_rec, self.rec_corrs)
 
 
-# Vecindarios
-num_rec = num_rec -1
+        # dataframe con todas las recomendaciones y sus valores junto a la protopersona
+        # dataframe vacio
+        final_rec = pd.DataFrame(data=None, columns=self.dfCopy.rename(columns={'User':'Name'}).columns)
 
-recomendaciones = top_val(num_rec, rec_corrs)
-
-
-# retorna las recomendaciones finales
-def get_recomendaciones():
-    return recomendaciones
+        # primer fila en 0
+        final_rec.loc[len(final_rec)] = 0
 
 
-# dataframe con todas las recomendaciones y sus valores junto a la protopersona
-# dataframe vacio
-final_rec = pd.DataFrame(data=None, columns=dfCopy.rename(columns={'User':'Name'}).columns)
+        # obtiene los dataframes de las recomendaciones y la protopersona
+        self.dfs = []
+        for i in recomendaciones.keys():
+            self.dfs.append(self.peliculasCopy.loc[self.peliculasCopy['Movie']==i].rename(columns={'Movie':'Name'}))
 
-# primer fila en 0
-final_rec.loc[len(final_rec)] = 0
+        self.dfs.append(self.protoCopy)
+        self.dfs[len(self.dfs)-1].insert(0, 'Name', 'Protopersona')
+        final_rec = pd.concat(self.dfs)
 
+    ##### GETTERS #####
 
-# obtiene los dataframes de las recomendaciones y la protopersona
-dfs = []
-for i in recomendaciones.keys():
-    dfs.append(peliculasCopy.loc[peliculasCopy['Movie']==i].rename(columns={'Movie':'Name'}))
-
-dfs.append(protoCopy)
-dfs[len(dfs)-1].insert(0, 'Name', 'Protopersona')
-final_rec = pd.concat(dfs)
+    ### Resultado final del codigo ###
+    def get_final_dataframe():
+        return final_rec
 
 
-def get_final_dataframe():
-    return final_rec
+    def get_corr_protopersona():
+        return self.rec_corrs
+
+    def get_recomendaciones():
+        return recomendaciones
+
+    def get_num_rec():
+        return self.num_rec
+
+    def get_vecinos():
+        return vecinos
+
+    def get_vecindario_df():
+        return self.protopersona
+
+    def get_protopersona():
+        return self.protoCopy
+
+    def get_num_vec():
+        return self.num_vec
+
+    def get_agr_met():
+        return self.agr_met
+
+    def get_norm_df():
+        return self.dfCopy
+
+    def get_corrs():
+        return self.corrs
+
+    def get_pesos():
+        return self.pesos
+
+    def get_main_df():
+        return self.df
+
+    def get_recommend_df():
+        return self.peliculas
+
+    def get_user_select():
+        return self.user_select
