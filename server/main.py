@@ -1,13 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.setUpUser import selected_user
-import recomendacion
+
+# obtenemos la clase del backend de recomendacion
+from recomendacion import Rec
+
+rec = Rec();
+
+rec.exec();
+
+print(rec.get_final_dataframe());
+
 
 # Declare the APP server instance
 app = Flask(__name__)
 # Enable CORS policies
 CORS(app)
-print(selected_user);
 
 # Variables to store values from front end.
 currentUser = ""

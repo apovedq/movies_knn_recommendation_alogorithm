@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 class Rec:
-    #imports
-    import numpy as np
-    import pandas as pd
-    import sklearn as sk
-    from sklearn.cluster import DBSCAN
-    import sklearn.metrics.pairwise 
 
     #Inicializa todas las variables base
     def __init__(self):
+        #imports
+        import numpy as np
+        import pandas as pd
+        import sklearn as sk
+        from sklearn.cluster import DBSCAN
+        import sklearn.metrics.pairwise 
 
         # Dataframe con usuarios (a comparar)
-        self.df = pd.read_csv('/data/actores.csv')
+        self.df = pd.read_csv('../data/actores.csv')
 
         # Dataframe con peliculas (recomendaciones)
-        self.peliculas = pd.read_csv('/data/peliculas.csv')
+        self.peliculas = pd.read_csv('../data/peliculas.csv')
 
 
         # Usuario selecionado a comparar con dataframe original
@@ -94,7 +94,13 @@ class Rec:
 
 
     ##### BLOQUE DE CODIGO #####
-    def exec():
+    def exec(self):
+        import numpy as np
+        import pandas as pd
+        import sklearn as sk
+        from sklearn.cluster import DBSCAN
+        import sklearn.metrics.pairwise 
+
         for i in self.df.drop(columns='User').columns:
                 self.pesos[i] = 1
 
@@ -136,11 +142,11 @@ class Rec:
         # self.dfCopy.loc[self.dfCopy['User']== self.dfCopy.iloc[1].User]
 
         # Funcion de similitud coseno
-        cos_sim = sklearn.metrics.pairwise.cosine_similarity
+        self.cos_sim = sklearn.metrics.pairwise.cosine_similarity
 
 
         for i in range(self.dfCopy.shape[0]):
-            self.corrs[self.dfCopy.iloc[i].User] = cos_sim(self.dfCopy.loc[self.dfCopy['User']==self.user_select].drop(columns='User') , self.dfCopy.loc[self.dfCopy['User']==self.dfCopy.iloc[i].User].drop(columns='User'))[0][0] 
+            self.corrs[self.dfCopy.iloc[i].User] = self.cos_sim(self.dfCopy.loc[self.dfCopy['User']==self.user_select].drop(columns='User') , self.dfCopy.loc[self.dfCopy['User']==self.dfCopy.iloc[i].User].drop(columns='User'))[0][0] 
 
 
 
@@ -157,10 +163,10 @@ class Rec:
                 temp.pop(new)
             return final
 
-        vecinos = top_val(self.num_vec, self.corrs)
+        self.vecinos = top_val(self.num_vec, self.corrs)
 
         # borra el usuario seleccionado
-        vecinos.pop(self.user_select)
+        self.vecinos.pop(self.user_select)
 
 
         # AGREGACION
@@ -172,7 +178,7 @@ class Rec:
 
 
         # obtiene los dataframes de las personas en el diccionario vecinos y los une en la protopersona
-        for i in vecinos.keys():
+        for i in self.vecinos.keys():
             self.dfI = self.dfCopy.loc[self.dfCopy['User']==i].drop(columns='User')
             self.protopersona = self.protopersona.add(self.dfI, fill_value=0)
 
@@ -236,77 +242,77 @@ class Rec:
         # RECOMENDACION
         # Correlacion
         for i in range(self.peliculasCopy.shape[0]):
-            self.rec_corrs[self.peliculasCopy.iloc[i].Movie] = cos_sim(self.protoCopy , self.peliculasCopy.loc[self.peliculasCopy['Movie']==self.peliculasCopy.iloc[i].Movie].drop(columns='Movie'))[0][0] 
+            self.rec_corrs[self.peliculasCopy.iloc[i].Movie] = self.cos_sim(self.protoCopy , self.peliculasCopy.loc[self.peliculasCopy['Movie']==self.peliculasCopy.iloc[i].Movie].drop(columns='Movie'))[0][0] 
 
 
         # Vecindarios
         self.num_rec = self.num_rec -1
 
-        recomendaciones = top_val(self.num_rec, self.rec_corrs)
+        self.recomendaciones = top_val(self.num_rec, self.rec_corrs)
 
 
         # dataframe con todas las recomendaciones y sus valores junto a la protopersona
         # dataframe vacio
-        final_rec = pd.DataFrame(data=None, columns=self.dfCopy.rename(columns={'User':'Name'}).columns)
+        self.final_rec = pd.DataFrame(data=None, columns=self.dfCopy.rename(columns={'User':'Name'}).columns)
 
         # primer fila en 0
-        final_rec.loc[len(final_rec)] = 0
+        self.final_rec.loc[len(self.final_rec)] = 0
 
 
         # obtiene los dataframes de las recomendaciones y la protopersona
         self.dfs = []
-        for i in recomendaciones.keys():
+        for i in self.recomendaciones.keys():
             self.dfs.append(self.peliculasCopy.loc[self.peliculasCopy['Movie']==i].rename(columns={'Movie':'Name'}))
 
         self.dfs.append(self.protoCopy)
         self.dfs[len(self.dfs)-1].insert(0, 'Name', 'Protopersona')
-        final_rec = pd.concat(self.dfs)
+        self.final_rec = pd.concat(self.dfs)
 
     ##### GETTERS #####
 
     ### Resultado final del codigo ###
-    def get_final_dataframe():
-        return final_rec
+    def get_final_dataframe(self):
+        return self.final_rec
 
 
-    def get_corr_protopersona():
+    def get_corr_protopersona(self):
         return self.rec_corrs
 
-    def get_recomendaciones():
-        return recomendaciones
+    def get_recomendaciones(self):
+        return self.recomendaciones
 
-    def get_num_rec():
+    def get_num_rec(self):
         return self.num_rec
 
-    def get_vecinos():
-        return vecinos
+    def get_vecinos(self):
+        return self.vecinos
 
-    def get_vecindario_df():
+    def get_vecindario_df(self):
         return self.protopersona
 
-    def get_protopersona():
+    def get_protopersona(self):
         return self.protoCopy
 
-    def get_num_vec():
+    def get_num_vec(self):
         return self.num_vec
 
-    def get_agr_met():
+    def get_agr_met(self):
         return self.agr_met
 
-    def get_norm_df():
+    def get_norm_df(self):
         return self.dfCopy
 
-    def get_corrs():
+    def get_corrs(self):
         return self.corrs
 
-    def get_pesos():
+    def get_pesos(self):
         return self.pesos
 
-    def get_main_df():
+    def get_main_df(self):
         return self.df
 
-    def get_recommend_df():
+    def get_recommend_df(self):
         return self.peliculas
 
-    def get_user_select():
+    def get_user_select(self):
         return self.user_select
