@@ -8,7 +8,9 @@ from recomendacion import Rec
 
 rec = Rec()
 
-rec.exec()
+rec.correlacion()
+
+rec.agregacion()
 
 # recomendacion sin ningun cambio de front
 print(rec.get_final_dataframe())
@@ -19,7 +21,6 @@ app = Flask(__name__)
 # Enable CORS policies
 CORS(app)
 
-
 # GET Current user: string =============================================================================
 @app.route("/getCurrentUser", methods=["GET"])
 def setUser():
@@ -28,13 +29,17 @@ def setUser():
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
+  rec.correlacion()
+
+  print("VECINOS: \n", rec.get_vecinos());
   return jsonify({"msg": list(rec.get_vecinos().keys())})
 
 
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_movie", methods=["GET"])
 def setMovie():
-  rec.exec();
+  rec.agregacion()
+  print("RECOMENDACIONES: \n", rec.get_final_dataframe())
   return jsonify({"msg": rec.get_final_dataframe()["Name"].to_list()[0]})
 
   # GET Connection status =============================================================================
@@ -65,6 +70,9 @@ def define_user():
     print("USUARIO ACTUAL \n", myUser['answer'])
     resp = (jsonify({"Access-Control-Allow-Origin": "*",'response': data}), 201, {'Access-Control-Allow-Origin': '*'})
     print(resp)
+
+    rec.set_user_select(myUser['answer'])
+
     return resp
 
 # POST setMethod: number =============================================================================
@@ -76,7 +84,10 @@ def define_method():
     myMethod = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
-    print("METODO ACTUAL \n",myMethod)
+    print("METODO ACTUAL \n",myMethod['answer'])
+
+    rec.set_agr_met(myMethod['answer'])
+
     return (jsonify({'response': data}), 201)
 
 # POST sliderValues: number =============================================================================
@@ -88,7 +99,18 @@ def define_slider_values():
     currenSliderValues = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
-    print("PESOS ACTUALES \n",currenSliderValues)
+    print("PESOS ACTUALES \n",currenSliderValues['answer'])
+
+    nuevosPesos = []
+    for i in currenSliderValues['answer']:
+        nuevosPesos.append(float(i)/10)
+
+    print("PESOS NORMALIZADOS \n", nuevosPesos)
+
+    rec.set_pesos(nuevosPesos)
+
+    #print(rec.get_pesos())
+
     return (jsonify({'response': data}), 201)
 
 # POST sliderValues: number =============================================================================
@@ -100,7 +122,10 @@ def define_knn_value():
     currentKnnValue = data
     if not data:
         return (jsonify({'error': 'No data provided'}), 400)
-    print("KNN ACTUAL \n", currentKnnValue)
+    print("KNN ACTUAL \n", currentKnnValue['answer'])
+
+    rec.set_num_vec(int(currentKnnValue['answer']))
+
     return (jsonify({'response': data}), 201)
 
 # Execute the app instance

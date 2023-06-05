@@ -1,14 +1,13 @@
 #!/usr/bin/env python
+import numpy as np
+import pandas as pd
+import sklearn as sk
+from sklearn.cluster import DBSCAN
+import sklearn.metrics.pairwise 
 class Rec:
 
     #Inicializa todas las variables base
     def __init__(self):
-        #imports
-        import numpy as np
-        import pandas as pd
-        import sklearn as sk
-        from sklearn.cluster import DBSCAN
-        import sklearn.metrics.pairwise 
 
         # Dataframe con usuarios (a comparar)
         self.df = pd.read_csv('../data/actores.csv')
@@ -64,7 +63,10 @@ class Rec:
 
     # coloca arreglo de pesos en orden de columna izq a der
     def set_pesos(self, x):
-        self.pesos = x
+        cnt = 0;
+        for i in self.pesos.keys():
+            self.pesos[i] = x[cnt]
+            cnt += 1
         return 1
 
 
@@ -92,14 +94,21 @@ class Rec:
         else:
             return 0
 
+    ##### FUNCIONES ETC #####
+    # Obtener top N valores de un diccionario D
+    def top_val(self, N, D):
+        temp = D.copy()
+        final = {}
+        
+        # iterador que agrega los N valores mas grandes del diccionario al diccionario final
+        for i in range(N+1):
+            new = list(temp.keys())[list(temp.values()).index(max(temp.values()))]
+            final[new] = temp[new]
+            temp.pop(new)
+        return final
 
-    ##### BLOQUE DE CODIGO #####
-    def exec(self):
-        import numpy as np
-        import pandas as pd
-        import sklearn as sk
-        from sklearn.cluster import DBSCAN
-        import sklearn.metrics.pairwise 
+    ##### BLOQUE DE CORRELACION / USUARIOS RECOMENDADOS / VECINDARIOS #####
+    def correlacion(self):
 
         for i in self.df.drop(columns='User').columns:
                 self.pesos[i] = 1
@@ -151,24 +160,15 @@ class Rec:
 
 
         # Vecindarios
-        # Obtener top N valores de un diccionario D
-        def top_val(N, D):
-            temp = D.copy()
-            final = {}
-            
-            # iterador que agrega los N valores mas grandes del diccionario al diccionario final
-            for i in range(N+1):
-                new = list(temp.keys())[list(temp.values()).index(max(temp.values()))]
-                final[new] = temp[new]
-                temp.pop(new)
-            return final
 
-        self.vecinos = top_val(self.num_vec, self.corrs)
+        self.vecinos = self.top_val(self.num_vec, self.corrs)
 
         # borra el usuario seleccionado
         self.vecinos.pop(self.user_select)
 
 
+    ##### BLOQUE DE AGREGACION / PROTOPERSONA / RECOMENDACION FINAL #####
+    def agregacion(self):
         # AGREGACION
         # dataframe vacio
         self.protopersona = pd.DataFrame(data=None, columns=self.dfCopy.drop(columns='User').columns)
@@ -248,7 +248,7 @@ class Rec:
         # Vecindarios
         self.num_rec = self.num_rec -1
 
-        self.recomendaciones = top_val(self.num_rec, self.rec_corrs)
+        self.recomendaciones = self.top_val(self.num_rec, self.rec_corrs)
 
 
         # dataframe con todas las recomendaciones y sus valores junto a la protopersona
