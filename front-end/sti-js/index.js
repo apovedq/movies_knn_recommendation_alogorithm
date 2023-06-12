@@ -96,28 +96,8 @@ function handleGetSlidersValue() {
 
 //Save the # of neighboors 
 let knnValue = ""
-
-// Cersiora que knn no sea mayor que el maximo
-const knn_input = document.getElementById("knn-value")
-async function getFromDB(url) {
-  const response = await fetch(url);
-  const jsonData = await response.json();
-  return jsonData
-}
-const maxKnn = getFromDB("http://127.0.0.1:5001/get_max_knn")
-  maxKnn.then((response) => {
-      knn_input.addEventListener("change", () => {
-	      if(Number(knn_input.value) < response.msg){
-		      return
-	      } else {
-		      knn_input.value = response.msg.toString();
-		      window.alert(`No se debe exceder a la cantidad de gente (${response.msg})`);
-	      }
-      });
-  });
-
 function handleGetKnnValue() {
-  knnValue = knn_input.value
+  knnValue = document.getElementById("knn-value").value
   
   postData(LOCALHOST + "/post_knn_value", { answer: knnValue }).then((raw) => 
         raw.response.answer
