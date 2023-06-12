@@ -11,6 +11,7 @@ const recommendedUsersComponent = document.getElementById("recommended-users");
 const users = getFromDB("http://127.0.0.1:5001/get_recommended_user")
     users.then((response) => {
         const recommendedUsers = response.msg;
+        console.log(resonse);
         recommendedUsers.forEach(element => {
             recommendedUsersComponent.innerHTML += `<li> ${element} </li>`
         });
@@ -24,6 +25,7 @@ const recommendedMovieComponent = document.getElementById("recommended-movie");
 
 const movie = getFromDB("http://127.0.0.1:5001/get_recommended_movie")
     movie.then((response) => {
+        console.log(resonse);
         const recommendedMovie = response.msg;
         recommendedMovieComponent.innerText = recommendedMovie;
        

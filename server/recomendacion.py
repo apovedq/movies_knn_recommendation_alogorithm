@@ -261,6 +261,16 @@ class Rec:
         self.dfs[len(self.dfs)-1].insert(0, 'Name', 'Protopersona')
         self.final_rec = pd.concat(self.dfs)
 
+
+        print("RECOMENDACION PY /////// \n")
+        print("FINAL user_select \n", self.user_select)
+        print("FINAL protopersona \n", self.protopersona)
+        print("FINAL pesos \n", self.pesos)
+        print("FINAL corrs \n", self.corrs)
+        print("FINAL num_vec \n", self.num_vec)
+        print("FINAL agr_met \n", self.agr_met)
+        print("FINAL num_rec \n", self.num_rec)
+        print("FINAL rec_corrs \n", self.rec_corrs)
         print("FINAL PY \n", self.final_rec)
 
     ##### GETTERS #####

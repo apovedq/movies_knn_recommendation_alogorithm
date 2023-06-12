@@ -4,15 +4,12 @@ from utils.setUpUser import selected_user
 import json
 
 # obtenemos la clase del backend de recomendacion
+import recomendacion
 from recomendacion import Rec
 
 rec = Rec()
 
 rec.exec()
-
-# recomendacion sin ningun cambio de front
-print(rec.get_final_dataframe())
-
 
 # Declare the APP server instance
 app = Flask(__name__)
@@ -28,14 +25,14 @@ def setUser():
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
   rec.exec()
-  print("VECINOS: \n", rec.get_vecinos());
+  print("VECINOS BACKEND: \n", rec.get_vecinos());
   return jsonify({"msg": list(rec.get_vecinos().keys())})
 
 
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_movie", methods=["GET"])
 def setMovie():
-  print("RECOMENDACIONES: \n", rec.get_final_dataframe())
+  print("RECOMENDACIONES BACKEND: \n", rec.get_final_dataframe())
   return jsonify({"msg": rec.get_final_dataframe()["Name"].to_list()[0]})
 
   # GET Connection status =============================================================================
@@ -68,6 +65,8 @@ def define_user():
     print(resp)
 
     rec.set_user_select(myUser['answer'])
+    
+    print("USUARIO BACKEND \n", rec.get_user_select())
 
     return resp
 
@@ -83,6 +82,8 @@ def define_method():
     print("METODO ACTUAL \n",myMethod['answer'])
 
     rec.set_agr_met(myMethod['answer'])
+    
+    print("METODO BACKEND \n", rec.get_agr_met())
 
     return (jsonify({'response': data}), 201)
 
@@ -105,7 +106,7 @@ def define_slider_values():
 
     rec.set_pesos(nuevosPesos)
 
-    #print(rec.get_pesos())
+    print("PESOS BACK \n", rec.get_pesos())
 
     return (jsonify({'response': data}), 201)
 
@@ -121,6 +122,8 @@ def define_knn_value():
     print("KNN ACTUAL \n", currentKnnValue['answer'])
 
     rec.set_num_vec(int(currentKnnValue['answer']))
+
+    print("KNN BACK \n", rec.get_num_vec())
 
     return (jsonify({'response': data}), 201)
 
