@@ -58,7 +58,7 @@ class Rec:
 
     def set_user_select(self, x):
         self.user_select = x
-        return 1
+        print("SET_USER_SELECT: ", self.user_select)
 
 
     # coloca arreglo de pesos en orden de columna izq a der
@@ -67,32 +67,26 @@ class Rec:
         for i in self.pesos.keys():
             self.pesos[i] = x[cnt]
             cnt += 1
-        return 1
+        print("SET_PESOS: ", self.pesos)
 
 
     # asigna num usuarios y metodo de agregacion
     def set_num_vec(self, x):
         if(x>0 and x<self.dfCopy.shape[0]):
             self.num_vec = x
-            return 1
-        else:
-            return 0
+        print("SET_NUM_VEC: ", self.num_vec)
 
     def set_agr_met(self, x):
         if(x>0 and x<4):
             self.agr_met = x
-            return 1
-        else:
-            return 0
+        print("SET_AGR_MET: ", self.agr_met)
 
 
     # asigna num recomendaciones
     def set_num_rec(self, x):
         if(x>0 and x<self.peliculasCopy.shape[0]):
             self.num_rec = x
-            return 1
-        else:
-            return 0
+        print("SET_NUM_REC: ", self.num_rec)
 
     ##### FUNCIONES ETC #####
     # Obtener top N valores de un diccionario D
@@ -267,9 +261,11 @@ class Rec:
         self.dfs[len(self.dfs)-1].insert(0, 'Name', 'Protopersona')
         self.final_rec = pd.concat(self.dfs)
 
+        print("FINAL PY \n", self.final_rec)
+
     ##### GETTERS #####
 
-    ### Resultado final del codigo ###
+    ### Resultado final del codigo 
     def get_final_dataframe(self):
         return self.final_rec
 
