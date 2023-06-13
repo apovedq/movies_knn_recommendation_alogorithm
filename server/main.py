@@ -41,6 +41,8 @@ def setMovie():
 def index():
   rec.reset()
   print("RESET /////// \n", rec.get_num_vec())
+  rec.exec()
+  print("RESET DEFAULT DF", rec.get_final_dataframe())
   return jsonify({"msg": "All good"})
 
 # POST Endpoint =============================================================================

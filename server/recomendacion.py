@@ -109,6 +109,8 @@ class Rec:
                 self.pesos[i] = 1
                 
         print("RECOMENDACION PY INICIAL !!!!!!! \n")
+        print("INICIO df \n", self.df)
+        print("INICIO peliculas \n", self.peliculas)
         print("INICIO user_select \n", self.user_select)
         print("INICIO protopersona \n", self.protopersona)
         print("INICIO pesos \n", self.pesos)
