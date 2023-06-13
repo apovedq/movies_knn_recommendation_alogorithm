@@ -197,7 +197,7 @@ class Rec:
 
         # Aplica metodo
         # 0 = Naive Average, 1 = Least Misery, 2 = Maximum Pleasure, 3 = Media Satisfaction
-        self.agr_met = 0
+        # self.agr_met = 0
 
         if (self.agr_met == 0):
             # se deja el promedio
