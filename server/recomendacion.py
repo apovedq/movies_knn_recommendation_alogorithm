@@ -104,9 +104,20 @@ class Rec:
     ##### BLOQUE DE CORRELACION / USUARIOS RECOMENDADOS / VECINDARIOS #####
     def exec(self):
 
-        for i in self.df.drop(columns='User').columns:
+        if (self.pesos == {}):
+            for i in self.df.drop(columns='User').columns:
                 self.pesos[i] = 1
-
+                
+        print("RECOMENDACION PY INICIAL !!!!!!! \n")
+        print("INICIO user_select \n", self.user_select)
+        print("INICIO protopersona \n", self.protopersona)
+        print("INICIO pesos \n", self.pesos)
+        print("INICIO corrs \n", self.corrs)
+        print("INICIO num_vec \n", self.num_vec)
+        print("INICIO agr_met \n", self.agr_met)
+        print("INICIO num_rec \n", self.num_rec)
+        print("INICIO rec_corrs \n", self.rec_corrs)
+        
         # Asegurar valores como float
         for i in self.df.drop(columns='User').columns:
             self.df[i] = pd.to_numeric(self.df[i], downcast='float')
@@ -262,12 +273,13 @@ class Rec:
         self.final_rec = pd.concat(self.dfs)
 
 
-        print("RECOMENDACION PY /////// \n")
+        print("RECOMENDACION PY FINAL /////// \n")
         print("FINAL user_select \n", self.user_select)
         print("FINAL protopersona \n", self.protopersona)
         print("FINAL pesos \n", self.pesos)
         print("FINAL corrs \n", self.corrs)
         print("FINAL num_vec \n", self.num_vec)
+        print("FINAL vecinos \n", self.vecinos)
         print("FINAL agr_met \n", self.agr_met)
         print("FINAL num_rec \n", self.num_rec)
         print("FINAL rec_corrs \n", self.rec_corrs)
@@ -324,3 +336,17 @@ class Rec:
 
     def get_user_list(self):
         return self.dfCopy["User"].to_list();
+
+    ##### REINICIA ####
+    def reset(self):
+        self.final_rec = 0;
+        self.df = pd.read_csv('../data/actores.csv')
+        self.peliculas = pd.read_csv('../data/peliculas.csv')
+        self.user_select = 'Andres Poveda'
+        self.protopersona = 0
+        self.pesos = {}
+        self.corrs = {}
+        self.num_vec = 5
+        self.agr_met = 0
+        self.num_rec = 4
+        self.rec_corrs = {}

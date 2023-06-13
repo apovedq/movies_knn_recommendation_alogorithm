@@ -19,12 +19,12 @@ CORS(app)
 # GET Current user: string =============================================================================
 @app.route("/getCurrentUser", methods=["GET"])
 def setUser():
+    print("USUARIO BACKEND ENVIADO: \n", rec.get_user_select())
     return jsonify({"Access-Control-Allow-Origin": "*", "msg": rec.get_user_select()})
 
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_user", methods=["GET"])
 def setUserList():
-  rec.exec()
   print("VECINOS BACKEND: \n", rec.get_vecinos());
   return jsonify({"msg": list(rec.get_vecinos().keys())})
 
@@ -32,12 +32,15 @@ def setUserList():
 # GET recomended users: list =============================================================================
 @app.route("/get_recommended_movie", methods=["GET"])
 def setMovie():
-  print("RECOMENDACIONES BACKEND: \n", rec.get_final_dataframe())
+  rec.exec()
+  print("RECOMENDACIONES BACKEND: \n", rec.get_final_dataframe()["Name"].to_list()[0])
   return jsonify({"msg": rec.get_final_dataframe()["Name"].to_list()[0]})
 
   # GET Connection status =============================================================================
 @app.route("/", methods=["GET"])
 def index():
+  rec.reset()
+  print("RESET /////// \n", rec.get_num_vec())
   return jsonify({"msg": "All good"})
 
 # POST Endpoint =============================================================================

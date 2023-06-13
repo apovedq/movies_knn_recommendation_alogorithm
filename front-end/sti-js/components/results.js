@@ -5,7 +5,7 @@ async function getFromDB(url) {
 }
 
 //Function to bring recommended users from db
-function handleSetRecommenedUsers() {
+async function handleSetRecommenedUsers() {
 const recommendedUsersComponent = document.getElementById("recommended-users");
     
 const users = getFromDB("http://127.0.0.1:5001/get_recommended_user")
@@ -20,7 +20,7 @@ const users = getFromDB("http://127.0.0.1:5001/get_recommended_user")
 
 //Function to bring recommended movie  from db
 
-function handleSetRecommendedMovie() {
+async function handleSetRecommendedMovie() {
 const recommendedMovieComponent = document.getElementById("recommended-movie");
 
 const movie = getFromDB("http://127.0.0.1:5001/get_recommended_movie")
@@ -28,13 +28,13 @@ const movie = getFromDB("http://127.0.0.1:5001/get_recommended_movie")
         console.log(response);
         const recommendedMovie = response.msg;
         recommendedMovieComponent.innerText = recommendedMovie;
-       
+        handleSetRecommenedUsers()
     })
 }
 
 //Function to set the grafic results
 function handleSetResults() {
-    handleSetRecommenedUsers()
     handleSetRecommendedMovie()
+    
 }
 
